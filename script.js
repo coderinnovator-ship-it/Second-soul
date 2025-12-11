@@ -2,10 +2,24 @@ const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
 
-// Replace this function later with real AI API call
+// Your OpenAI API key (keep private, for production use server-side)
+const OPENAI_API_KEY = "YOUR_API_KEY_HERE"; // ← replace with your key
+
 async function getAIResponse(message) {
-    // For now, simple placeholder response
-    return `AI says: I received your message "${message}"`;
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${OPENAI_API_KEY}`
+        },
+        body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [{ role: "user", content: message }],
+            max_tokens: 200
+        })
+    });
+    const data = await response.json();
+    return data.choices[0].message.content;
 }
 
 function addMessage(text, sender) {
