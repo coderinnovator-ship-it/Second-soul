@@ -2,7 +2,7 @@ const sendBtn = document.getElementById("sendBtn");
 const messageInput = document.getElementById("messageInput");
 const chatBox = document.getElementById("chatBox");
 
-// ← Your Pipedream workflow URL
+// Pipedream webhook URL
 const WEBHOOK_URL = "https://eob32xrk3hxwxro.m.pipedream.net";
 
 async function sendMessage() {
@@ -19,12 +19,11 @@ async function sendMessage() {
       body: JSON.stringify({ message })
     });
 
-    const text = await response.text();
-    chatBox.innerHTML += `<div class="ai-msg">AI: ${text}</div>`;
+    const data = await response.json();
+    chatBox.innerHTML += `<div class="ai-msg">AI: ${data.reply}</div>`;
     chatBox.scrollTop = chatBox.scrollHeight;
-
   } catch (err) {
-    chatBox.innerHTML += `<div class="ai-msg">AI: Server error. Try again later.</div>`;
+    chatBox.innerHTML += `<div class="ai-msg">AI: Error connecting to server.</div>`;
     console.error(err);
   }
 }
