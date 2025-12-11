@@ -1,39 +1,14 @@
-const sendBtn = document.getElementById("sendBtn");
-const messageInput = document.getElementById("messageInput");
-const chatBox = document.getElementById("chatBox");
+const messageInput = document.getElementById("messageInput"); // your input field
+const sendButton = document.getElementById("sendButton"); // your send button
 
-// Your deployed Pipedream workflow URL
-const WEBHOOK_URL = "https://eob32xrk3hxwxro.m.pipedream.net";
+sendButton.addEventListener("click", async () => {
+  const message = messageInput.value;
 
-async function sendMessage() {
-  const message = messageInput.value.trim();
-  if (!message) return;
+  await fetch("https://eob32xrk3hxwxro.m.pipedream.net", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message }) // MUST be { message: "..." }
+  });
 
-  chatBox.innerHTML += `<div class="user-msg">You: ${message}</div>`;
   messageInput.value = "";
-  chatBox.scrollTop = chatBox.scrollHeight;
-
-  try {
-    // SEND correct JSON
-    const response = await fetch(WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message }) // ← must be { message: "..." }
-    });
-
-    const data = await response.json(); // parse JSON from workflow
-    const text = data.reply || "No response from AI.";
-
-    chatBox.innerHTML += `<div class="ai-msg">AI: ${text}</div>`;
-    chatBox.scrollTop = chatBox.scrollHeight;
-
-  } catch (err) {
-    chatBox.innerHTML += `<div class="ai-msg">AI: Server error. Try again later.</div>`;
-    console.error(err);
-  }
-}
-
-sendBtn.addEventListener("click", sendMessage);
-messageInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") sendMessage();
 });
